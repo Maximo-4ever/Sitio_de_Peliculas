@@ -1,3 +1,4 @@
+const fragment = document.createDocumentFragment();
 let pagina = 1;
 let peliculas = "";
 let ultimaPelicula;
@@ -26,17 +27,14 @@ const cargarPeliculas = async () => {
     );
     if (res.status === 200) {
       const data = await res.json();
-      //Pintar peliculas si no todo salio bien
+      //Pintar peliculas si todo salio bien
       data.results.forEach((pelicula) => {
-        peliculas += //html
-        `
-        <div class="pelicula">
-            <img src="https://image.tmdb.org/t/p/w500/${pelicula.poster_path}" class="poster" />
-            <h3 class="titulo">${pelicula.title}</h3>
-        </div>
-        `;
+        const clone = template.content.cloneNode(true);
+        clone.querySelector(".poster").setAttribute("src", `https://image.tmdb.org/t/p/w500/${pelicula.poster_path}`);
+        clone.querySelector(".titulo").textContent = pelicula.title;
+        fragment.appendChild(clone);
       });
-      document.getElementById("contenedor").innerHTML = peliculas;
+      document.getElementById("contenedor").appendChild(fragment);
       
       //Obtener la ultima pelicula y llamar al observador
       if (pagina < 1000) {
